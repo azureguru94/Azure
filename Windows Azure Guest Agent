@@ -36,7 +36,7 @@ Solution:
  C:\Windows\OEM\        "delete the conent of the OEM folder , don't delete the folder itself" 
  C:\Windows Azure       "delete the folder , and if it can't be deleted because it's used by the service you can restart the machine and then try to delete it again or rename it"
 
-4-Open CMD as Admin and delete the service
+4-Open CMD as Admin and delete the service by running the below command
 
  SC Delete "WindowsAzureGuestAgent"
  
