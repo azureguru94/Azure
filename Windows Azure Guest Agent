@@ -9,50 +9,51 @@ To remove VM Agent
 Impact : 
 --------
 
-> when the VM agent is in "Not Ready" state that will cause an issue with backup , extensions , administrative operations as mentioned above.
+when the VM agent is in "Not Ready" state that will cause an issue with backup , extensions , administrative operations as mentioned above.
 
 Troubleshooting Steps : 
 -----------------------
 
-> I've followed all the steps mentioned in the offical documentation but it doesn't solve the issue in my case and while i was trying to install the agent in offline mode i faced an error : "Object doesn't support this property or method : 'Me.Script'"
+I've followed all the steps mentioned in the offical documentation but it doesn't solve the issue in my case and while i was trying to install the agent in offline mode i faced an error : "Object doesn't support this property or method : 'Me.Script'"
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-On the affected machine: 
------------------------
+>>> On the affected machine: 
+----------------------------
 
-> Stop "Windows Azure Guest Agent" if it was running
+1-Stop "Windows Azure Guest Agent" if it was running
 
-> Export then delete those registry in the path : 
+2-Export then delete those registry in the path : 
 
-Computer\HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WindowsAzureGuestAgent
-Computer\HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\rdagent
+ Computer\HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WindowsAzureGuestAgent
+ Computer\HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\rdagent
 
-> Backup then Remove
+3-Backup then Remove
 
-C:\Windows\OEM\        "delete the conent of the OEM folder , don't delete the folder itself" 
-C:\Windows Azure       "delete the folder , and if it can't be deleted because it's used by the service you can restart the machine and then try to delete it again or rename it"
+ C:\Windows\OEM\        "delete the conent of the OEM folder , don't delete the folder itself" 
+ C:\Windows Azure       "delete the folder , and if it can't be deleted because it's used by the service you can restart the machine and then try to delete it again or rename it"
 
-> Open CMD as Admin and delete the service
+4-Open CMD as Admin and delete the service
 
-SC Delete "WindowsAzureGuestAgent"
+ SC Delete "WindowsAzureGuestAgent"
  
-Restart the server and check that the service deleted succesfully .
+5-Restart the server and check that the service deleted succesfully .
 ----------------------------------------------------------------------------------------------------------------
-Now go to any other machine that the agent is working normally on and do the following : 
 
-Export the below registry : 
+>>> From a Working machine : 
+-----------------------------
+
+1-Export the below registry : 
 
 	• Computer\HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WindowsAzureGuestAgent
 	• Computer\HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\rdagent
-From a working VM
- 
-Then we need to create a service for Guest Agent:
- 
-Copy the path in registry file
-Computer\HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WindowsAzureGuestAgent\ImagePath
- 
-New-Service -Name "YourServiceName" -BinaryPathName <yourproject>.exe
-New-Service -Name "WindowsAzureGuestAgent" -BinaryPathName C:\WindowsAzure\Packages\GuestAgent\WindowsAzureGuestAgent.exe
+	
+and then copy them to the affected machine and install them
 
-=======
-This file contains troublshooting steps to solve the issue of " VM extension Not Ready " 
->>>>>>> 83deca72fb3120551aacecee782621e44e83f650
+2- Copy the content of those folders to the affected machine in the same location (C:\Windows Azure  &  C:\Windows\OEM)
+
+3-Create the "Windows Azure Guest Agent" again using powershell (run as administrator) by using the following command :
+
+  New-Service -Name "WindowsAzureGuestAgent" -BinaryPathName C:\WindowsAzure\Packages\GuestAgent\WindowsAzureGuestAgent.exe
+
+Finally go to Services to check that the service gets installed and then start it if it wasn't running and then restart the virtual machine , then check on the azure portal in 
+
+the overview tab on the virtual machine blade and you'll find that the Agent Status is Ready 
