@@ -43,7 +43,7 @@ Solution:
 5-Restart the server and check that the service deleted succesfully .
 ----------------------------------------------------------------------------------------------------------------
 
->>> on a Working machine : 
+>>> on a Working machine :
 
 1-Export the below registry : 
 
