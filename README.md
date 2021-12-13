@@ -1,3 +1,3 @@
 # Troubleshooting
 
-This repository for Azure issues troubleshooting
+This repository for any Azure related issues and its troubleshooting  
