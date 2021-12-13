@@ -1,10 +1,9 @@
-This file contains troublshooting steps to solve the issue of " VM Agent Not Ready " 
+This file contains steps to solve the issue of " VM Agent Not Ready " for windows virtual machines ...
 
 What is Azure VM Agent : 
 ------------------------
 
-The Microsoft Azure Virtual Machine Agent (VM Agent) is a secure, lightweight process that manages virtual machine (VM) interaction with the Azure Fabric Controller. The VM Agent has a primary role in enabling and executing Azure virtual machine extensions. VM Extensions enable post-deployment configuration of VM, such as installing and configuring software. VM extensions also enable recovery features such as resetting the administrative password of a VM. Without the Azure VM Agent, VM extensions cannot be run
-To remove VM Agent
+TAzure Virtual Machine Agent (VM Agent) is a secure, lightweight process that manages virtual machine (VM) interaction with the Azure Fabric Controller. The VM Agent has a primary role in enabling and executing Azure virtual machine extensions. VM Extensions enable post-deployment configuration of VM, such as installing and configuring software. VM extensions also enable recovery features such as resetting the administrative password of a VM. Without the Azure VM Agent, VM extensions cannot be run
  
 Impact : 
 --------
@@ -14,10 +13,16 @@ when the VM agent is in "Not Ready" state that will cause an issue with backup ,
 Troubleshooting Steps : 
 -----------------------
 
-I've followed all the steps mentioned in the offical documentation but it doesn't solve the issue in my case and while i was trying to install the agent in offline mode i faced an error : "Object doesn't support this property or method : 'Me.Script'"
------------------------------------------------------------------------------------------------------------------------------------------------------------------
+I've followed all the steps mentioned in the offical documentation but it doesn't solve the issue in my case and while i was trying to install the agent in offline mode i faced the below error 
+
+"Object doesn't support this property or method : 'Me.Script'"
+
+---------------------------------------------------------------
+
+Solution:
+----------
+
 >>> On the affected machine: 
-----------------------------
 
 1-Stop "Windows Azure Guest Agent" if it was running
 
@@ -38,13 +43,12 @@ I've followed all the steps mentioned in the offical documentation but it doesn'
 5-Restart the server and check that the service deleted succesfully .
 ----------------------------------------------------------------------------------------------------------------
 
->>> From a Working machine : 
------------------------------
+>>> on a Working machine : 
 
 1-Export the below registry : 
 
-	• Computer\HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WindowsAzureGuestAgent
-	• Computer\HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\rdagent
+ Computer\HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WindowsAzureGuestAgent
+ Computer\HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\rdagent
 	
 and then copy them to the affected machine and install them
 
@@ -52,8 +56,9 @@ and then copy them to the affected machine and install them
 
 3-Create the "Windows Azure Guest Agent" again using powershell (run as administrator) by using the following command :
 
-  New-Service -Name "WindowsAzureGuestAgent" -BinaryPathName C:\WindowsAzure\Packages\GuestAgent\WindowsAzureGuestAgent.exe
+ New-Service -Name "WindowsAzureGuestAgent" -BinaryPathName C:\WindowsAzure\Packages\GuestAgent\WindowsAzureGuestAgent.exe
 
 Finally go to Services to check that the service gets installed and then start it if it wasn't running and then restart the virtual machine , then check on the azure portal in 
+the overview tab on the virtual machine blade and you'll find that the Agent Status is Ready ...
 
-the overview tab on the virtual machine blade and you'll find that the Agent Status is Ready 
+Note That : this solution is not official and doesn't exist in microsoft docs and it solved the issue in my case , SO please don't try this solution unless you've tried all the possible recommended solutions from the documentation with no result then you can give this a try and also i've tested this solution multiple times on different windows server versions and it worked normally .
